@@ -1,11 +1,11 @@
 import crypto from "crypto";
-import AccountRepository from "../../infra/repository/AccountRepository";
 import RideRepository from "../../infra/repository/RideRepository";
 import Ride from "../../domain/entity/Ride";
+import AccountGateway from "../gateway/AccountGateway";
 
 export default class AcceptRide {
 
-	constructor (readonly rideRepository: RideRepository, readonly accountRepository: AccountRepository) {
+	constructor (readonly rideRepository: RideRepository, readonly accountGateway: AccountGateway) {
 
 	}
 

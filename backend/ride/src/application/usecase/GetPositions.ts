@@ -1,4 +1,3 @@
-import AccountRepository from "../../infra/repository/AccountRepository";
 import PositionRepository from "../../infra/repository/PositionRepository";
 import RideRepository from "../../infra/repository/RideRepository";
 
