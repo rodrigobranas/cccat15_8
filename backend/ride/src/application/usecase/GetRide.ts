@@ -24,6 +24,7 @@ export default class GetRide {
 			lastLat: ride.getLastLat(),
 			lastLong: ride.getLastLong(),
 			distance: ride.getDistance(),
+			fare: ride.getFare(),
 			date: ride.date,
 			passengerName: passenger.name
 		}
@@ -42,6 +43,7 @@ type Output = {
 	lastLat: number,
 	lastLong: number,
 	distance: number,
+	fare: number,
 	date: Date,
 	passengerName: string
 }

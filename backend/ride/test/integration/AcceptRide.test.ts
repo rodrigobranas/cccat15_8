@@ -5,6 +5,7 @@ import RequestRide from "../../src/application/usecase/RequestRide";
 import DatabaseConnection, { PgPromiseAdapter } from "../../src/infra/database/DatabaseConnection";
 import AccountGatewayHttp from "../../src/infra/gateway/AccountGatewayHttp";
 import { MailerGatewayConsole } from "../../src/infra/gateway/MailerGateway";
+import { AxiosAdapter } from "../../src/infra/http/HttpClient";
 import { RideRepositoryDatabase } from "../../src/infra/repository/RideRepository";
 
 let connection: DatabaseConnection;
@@ -16,7 +17,7 @@ let accountGateway: AccountGateway;
 beforeEach(async () => {
 	connection = new PgPromiseAdapter();
 	const rideRepository = new RideRepositoryDatabase(connection);
-	accountGateway = new AccountGatewayHttp();
+	accountGateway = new AccountGatewayHttp(new AxiosAdapter());
 	requestRide = new RequestRide(rideRepository, accountGateway);
 	getRide = new GetRide(rideRepository, accountGateway);
 	acceptRide = new AcceptRide(rideRepository, accountGateway);
