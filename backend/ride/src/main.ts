@@ -13,6 +13,7 @@ import Mediator from "./infra/mediator/Mediator";
 import ProcessPayment from "./application/usecase/ProcessPayment";
 import { RabbitMQAdapter } from "./infra/queue/Queue";
 import QueueController from "./infra/queue/QueueController";
+import UpdateRideProjectionHandler from "./application/handler/UpdateRideProjectionHandler";
 
 async function main () {
 	const httpServer = new ExpressAdapter();
@@ -24,6 +25,7 @@ async function main () {
 	const accountGateway = new AccountGatewayHttp(new AxiosAdapter());
 	const requestRide = new RequestRide(rideRepository, accountGateway);
 	const processPayment = new ProcessPayment(rideRepository);
+	const updateRideProjectionHandler = new UpdateRideProjectionHandler(connection);
 	const mediator = new Mediator();
 	mediator.register("rideCompleted", async (input: any) => {
 		await processPayment.execute(input.rideId);
@@ -35,7 +37,7 @@ async function main () {
 	registry.register("getRide", getRide);
 	// registry.register("finishRide", finishRide);
 	new MainController(httpServer);
-	new QueueController(queue, processPayment);
+	new QueueController(queue, processPayment, updateRideProjectionHandler);
 	httpServer.listen(3000);
 }
 

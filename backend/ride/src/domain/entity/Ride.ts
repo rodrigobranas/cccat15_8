@@ -2,14 +2,17 @@ import crypto from "crypto";
 import Coord from "../vo/Coord";
 import DistanceCalculator from "../ds/DistanceCalculator";
 import { FareCalculatorFactory } from "../ds/FareCalculator";
+import RideCompletedEvent from "../event/RideCompletedEvent";
+import Aggregate from "./Aggregate";
 
 // Aggregate (Ride<AR>, Coord, Coord, Coord)
-export default class Ride {
+export default class Ride extends Aggregate {
 	private from: Coord;
 	private to: Coord;
 	private lastPosition: Coord;
 
 	private constructor (readonly rideId: string, readonly passengerId: string, fromLat: number, fromLong: number, toLat: number, toLong: number, private status: string, readonly date: Date, lastLat: number, lastLong: number, private distance: number, private fare: number, private driverId?: string) {
+		super();
 		this.from = new Coord(fromLat, fromLong);
 		this.to = new Coord(toLat, toLong);
 		this.lastPosition = new Coord(lastLat, lastLong);
@@ -48,6 +51,7 @@ export default class Ride {
 		if (this.status !== "in_progress") throw new Error("Invalid status");
 		this.status = "completed";
 		this.fare = FareCalculatorFactory.create(this.date).calculate(this.distance);
+		this.notify(new RideCompletedEvent(this.rideId, "123456", this.getFare()));
 	}
 
 	getStatus () {

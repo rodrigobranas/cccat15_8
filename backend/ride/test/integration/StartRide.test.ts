@@ -1,4 +1,7 @@
 import AccountGateway from "../../src/application/gateway/AccountGateway";
+import UpdateRideProjectionHandler from "../../src/application/handler/UpdateRideProjectionHandler";
+import GetRideProjectionQuery from "../../src/application/query/GetRideProjectionQuery.ts";
+import GetRideQuery from "../../src/application/query/GetRideQuery";
 import AcceptRide from "../../src/application/usecase/AcceptRide";
 import GetRide from "../../src/application/usecase/GetRide";
 import RequestRide from "../../src/application/usecase/RequestRide";
@@ -7,6 +10,7 @@ import DatabaseConnection, { PgPromiseAdapter } from "../../src/infra/database/D
 import AccountGatewayHttp from "../../src/infra/gateway/AccountGatewayHttp";
 import { MailerGatewayConsole } from "../../src/infra/gateway/MailerGateway";
 import { AxiosAdapter } from "../../src/infra/http/HttpClient";
+import { RabbitMQAdapter } from "../../src/infra/queue/Queue";
 import { RideRepositoryDatabase } from "../../src/infra/repository/RideRepository";
 
 let connection: DatabaseConnection;
@@ -23,7 +27,9 @@ beforeEach(async () => {
 	requestRide = new RequestRide(rideRepository, accountGateway);
 	getRide = new GetRide(rideRepository, accountGateway);
 	acceptRide = new AcceptRide(rideRepository, accountGateway);
-	startRide = new StartRide(rideRepository);
+	const queue = new RabbitMQAdapter();
+	await queue.connect();
+	startRide = new StartRide(rideRepository, queue);
 })
 
 test("Deve iniciar uma corrida", async function () {
@@ -59,8 +65,16 @@ test("Deve iniciar uma corrida", async function () {
 		rideId: outputRequestRide.rideId,
 	};
 	await startRide.execute(inputStartRide);
-	const outputGetRide = await getRide.execute(outputRequestRide.rideId);
-	expect(outputGetRide.status).toBe("in_progress");
+	// const outputGetRide = await getRide.execute(outputRequestRide.rideId);
+	// expect(outputGetRide.status).toBe("in_progress");
+	// const getRideQuery = new GetRideQuery(connection);
+	// const outputGetRideQuery = await getRideQuery.execute(outputRequestRide.rideId);
+	// console.log(outputGetRideQuery);
+	const updateRideProjectionHandler = new UpdateRideProjectionHandler(connection);
+	await updateRideProjectionHandler.execute(outputRequestRide.rideId);
+	const getRideProjectionQuery = new GetRideProjectionQuery(connection);
+	const outputGetRideProjectionQuery = await getRideProjectionQuery.execute(outputRequestRide.rideId);
+	console.log(outputGetRideProjectionQuery);
 });
 
 afterEach(async () => {

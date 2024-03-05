@@ -1,8 +1,9 @@
+import Queue from "../../infra/queue/Queue";
 import RideRepository from "../../infra/repository/RideRepository";
 
 export default class StartRide {
 
-	constructor (readonly rideRepository: RideRepository) {
+	constructor (readonly rideRepository: RideRepository, readonly queue: Queue) {
 
 	}
 
@@ -11,6 +12,7 @@ export default class StartRide {
 		if (!ride) throw new Error("Ride not found");
 		ride.start();
 		await this.rideRepository.update(ride);
+		await this.queue.publish("rideStarted", { rideId: ride.rideId });
 	}
 }
 

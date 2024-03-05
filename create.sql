@@ -35,3 +35,15 @@ create table cccat15.position (
 	long numeric,
 	date timestamp
 );
+
+create table cccat15.ride_projection (
+	ride_id uuid,
+	status text,
+	date timestamp,
+	fare numeric,
+	distance numeric,
+	passenger_name text,
+	passenger_email text,
+	driver_name text,
+	driver_email text
+);

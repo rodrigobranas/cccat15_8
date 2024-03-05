@@ -5,7 +5,13 @@ export default class ProcessPayment {
 	constructor (readonly rideRepository: RideRepository) {
 	}
 
-	async execute (rideId: string) {
-		console.log("processPayment", rideId);
+	async execute (input: Input) {
+		console.log("processPayment", input);
 	}
+}
+
+type Input = {
+	rideId: string,
+	creditCardToken: string,
+	amount: number
 }

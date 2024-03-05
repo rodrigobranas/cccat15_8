@@ -1,9 +1,9 @@
-import crypto from "crypto";
 import RideRepository from "../../infra/repository/RideRepository";
 import Ride from "../../domain/entity/Ride";
 import AccountGateway from "../gateway/AccountGateway";
+import Usecase from "./Usecase";
 
-export default class RequestRide {
+export default class RequestRide implements Usecase {
 
 	constructor (readonly rideRepository: RideRepository, readonly accountGateway: AccountGateway) {
 	}
