@@ -1,0 +1,30 @@
+import SignupForm from "../src/domain/SignupForm";
+
+test("Deve testar o signupForm", function () {
+	const signupForm = new SignupForm();
+	expect(signupForm.step).toBe(1);
+	expect(signupForm.calculateProgress()).toBe(0);
+	signupForm.isPassenger = true;
+	expect(signupForm.calculateProgress()).toBe(25);
+	signupForm.next();
+	expect(signupForm.step).toBe(2);
+	signupForm.previous();
+	expect(signupForm.step).toBe(1);
+	signupForm.next();
+	signupForm.name = "John Doe";
+	expect(signupForm.calculateProgress()).toBe(40);
+	signupForm.email = `john.doe${Math.random()}@gmail.com`;
+	expect(signupForm.calculateProgress()).toBe(55);
+	signupForm.cpf = "97456321558";
+	expect(signupForm.calculateProgress()).toBe(70);
+	signupForm.next();
+	expect(signupForm.step).toBe(3);
+	signupForm.previous();
+	expect(signupForm.step).toBe(2);
+	signupForm.next();
+	signupForm.password = "12345678";
+	expect(signupForm.calculateProgress()).toBe(85);
+	signupForm.confirmPassword = "12345678";
+	expect(signupForm.calculateProgress()).toBe(100);
+	signupForm.submit();
+});
